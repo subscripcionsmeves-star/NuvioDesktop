@@ -2354,4 +2354,6 @@ Utilizas esta función bajo tu propia responsabilidad. P2P se puede desactivar e
     <string name="stream_info_subtitle_source_addon">Complemento</string>
     <string name="stream_info_subtitle_source_embedded">Integrado</string>
     <string name="stream_info_player_engine">Motor de reproducción</string>
+    <string name="keyboard_shortcuts_title">Atajos de teclado</string>
+    <string name="keyboard_shortcuts_message">%1$s+1  Inicio\n%1$s+2  Buscar\n%1$s+3  Biblioteca\n%1$s+4  Ajustes\n%1$s+K / %1$s+F  Buscar\n%1$s+,  Ajustes\n%1$s+D  Descargas\nEsc / %2$s  Atrás\n↑ / ↓  Desplazarse\n← / →  Desplazar una fila a los lados\nRe Pág / Av Pág  Desplazarse una página\nIntro  Pulsar lo que hay bajo el puntero\n%1$s+/ o F1  Mostrar esta ayuda\n\nPulsa de nuevo el atajo de una pestaña para volver arriba.</string>
 </resources>

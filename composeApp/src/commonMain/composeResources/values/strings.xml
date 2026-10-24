@@ -2542,4 +2542,6 @@
     <string name="stream_info_subtitle_source_embedded">Embedded</string>
     <string name="stream_info_player_engine">Player Engine</string>
     <string name="stream_info_server">Server</string>
+    <string name="keyboard_shortcuts_title">Keyboard shortcuts</string>
+    <string name="keyboard_shortcuts_message">%1$s+1  Home\n%1$s+2  Search\n%1$s+3  Library\n%1$s+4  Settings\n%1$s+K / %1$s+F  Search\n%1$s+,  Settings\n%1$s+D  Downloads\nEsc / %2$s  Back\n↑ / ↓  Scroll\n← / →  Scroll a row sideways\nPage Up / Page Down  Scroll a page\nEnter  Click what the mouse pointer is on\n%1$s+/ or F1  Show this help\n\nPress a tab shortcut again to scroll back to the top.</string>
 </resources>

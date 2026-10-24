@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -1309,6 +1310,43 @@ internal fun MainAppContent(
             }
         }
 
+        var showKeyboardShortcutsHelp by remember { mutableStateOf(false) }
+        if (isDesktop) {
+            SideEffect { AppKeyboardShortcuts.keyboardScrollEnabled = currentRoute !is PlayerRoute }
+            LaunchedEffect(navController, useNativeNavigation, onActivate) {
+                AppKeyboardShortcuts.requests.collect { shortcut ->
+                    // The player has its own keyboard controls.
+                    if (navController.currentRoute is PlayerRoute) return@collect
+                    fun showRootTab(tab: AppScreenTab) {
+                        while (navController.currentRoute !is TabsRoute && navBackStack.size > 1) {
+                            navController.popBackStack()
+                        }
+                        handleRootTabClick(tab)
+                    }
+                    when (shortcut) {
+                        AppKeyboardShortcut.Home -> showRootTab(AppScreenTab.Home)
+                        AppKeyboardShortcut.Library -> showRootTab(AppScreenTab.Library)
+                        AppKeyboardShortcut.Settings -> showRootTab(AppScreenTab.Settings)
+                        AppKeyboardShortcut.Search -> {
+                            val alreadyOnSearch = navController.currentRoute is TabsRoute &&
+                                selectedTab == AppScreenTab.Search
+                            showRootTab(AppScreenTab.Search)
+                            if (!alreadyOnSearch) searchFocusRequestCount++
+                        }
+                        AppKeyboardShortcut.Downloads -> {
+                            if (AppFeaturePolicy.downloadsEnabled) {
+                                navController.navigate(DownloadsRoute(downloadsTitle)) {
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
+                        AppKeyboardShortcut.Back -> mouseBackInput.backCompleted()
+                        AppKeyboardShortcut.ShowHelp -> showKeyboardShortcutsHelp = !showKeyboardShortcutsHelp
+                    }
+                }
+            }
+        }
+
         AppUpdaterHost(
             controller = appUpdaterController,
             modifier = Modifier.fillMaxSize(),
@@ -2121,6 +2159,18 @@ internal fun MainAppContent(
                 onDismiss = {
                     showExitConfirmation = false
                 },
+            )
+
+            NuvioStatusModal(
+                title = stringResource(Res.string.keyboard_shortcuts_title),
+                message = stringResource(
+                    Res.string.keyboard_shortcuts_message,
+                    AppKeyboardShortcuts.primaryModifierLabel,
+                    AppKeyboardShortcuts.backShortcutLabel,
+                ),
+                isVisible = showKeyboardShortcutsHelp,
+                onConfirm = { showKeyboardShortcutsHelp = false },
+                onDismiss = { showKeyboardShortcutsHelp = false },
             )
 
             androidx.compose.animation.AnimatedVisibility(

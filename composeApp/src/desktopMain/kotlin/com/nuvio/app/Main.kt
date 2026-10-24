@@ -120,6 +120,8 @@ fun main(args: Array<String>) {
             placement = initialPlacement,
         )
         val fullscreenController = remember { DesktopAppFullscreenController() }
+        val keyboardWheelScroll = remember { KeyboardWheelScroll() }
+        val keyboardPointerClick = remember { KeyboardPointerClick() }
 
         SwingWindow(
             onCloseRequest = {
@@ -132,7 +134,13 @@ fun main(args: Array<String>) {
             state = windowState,
             icon = painterResource(appIconState.selected.transparentPreviewResource),
             init = ::configureMacosWindowBeforePeer,
+            onKeyEvent = { keyboardWheelScroll.onKeyEvent(it) || keyboardPointerClick.onKeyEvent(it) },
         ) {
+            keyboardWheelScroll.Run(window)
+            DisposableEffect(window) {
+                keyboardPointerClick.window = window
+                onDispose { keyboardPointerClick.window = null }
+            }
             SideEffect {
                 window.background = NuvioDesktopNativeBackground
                 window.rootPane.background = NuvioDesktopNativeBackground
@@ -204,10 +212,12 @@ fun main(args: Array<String>) {
                     },
                 )
                 val uninstallFullscreenShortcuts = installDesktopAppFullscreenShortcuts(window)
+                val uninstallKeyboardShortcuts = installDesktopKeyboardShortcuts(window)
                 val untrackMaximizedBounds = window.trackMaximizedBoundsForCurrentScreen()
                 onDispose {
                     fullscreenController.dispose(window)
                     uninstallFullscreenShortcuts()
+                    uninstallKeyboardShortcuts()
                     untrackMaximizedBounds()
                     unregisterFullscreenToggle()
                 }
